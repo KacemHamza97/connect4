@@ -5,10 +5,14 @@ import math
 from stable_baselines3 import PPO
 
 from custom_env import CustomEnv
+from model import get_model
 
 rand = random.Random()
 env = CustomEnv()
-model = PPO.load('./connect_4', env)
+# model = PPO.load('./connect_4', env)
+model = get_model()
+model.load_weights('DQN_C4.h5')
+
 
 
 class Connect4_GUI(Connect4):
@@ -93,8 +97,10 @@ class Connect4_GUI(Connect4):
 
                 # Ask for Player 2 Input
                 elif player == -human_player:
-                    move = model.predict(self.board)[0]
                     # move = rand.choice(moves)
+                    move = model.predict(self.board)
+                    move = move.argmax(axis=1)[1]
+                    print(move)
                     if move in moves:
                         self.make_move(move)
                         self.draw_board()

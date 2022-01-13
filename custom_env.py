@@ -2,15 +2,18 @@ from gym import Env
 from gym.spaces import Discrete, Box
 import numpy as np
 
+NUM_ROWS = 6
+NUM_COLS = 7
+NUM2WIN = 4
+
 
 class CustomEnv(Env):
-    NUM_ROWS = 6
-    NUM_COLS = 7
-    NUM2WIN = 4
-
     def __init__(self):
         # Actions we can take: throw the rock in one of the 7 column
-        self.action_space = Discrete(7)
+        self.NUM_ROWS = 6
+        self.NUM_COLS = 7
+        self.NUM2WIN = 4
+        self.action_space = Discrete(NUM_COLS)
         # state matrix
         self.observation_space = Box(low=np.array([-1 for i in range(7 * 6)]).reshape(6, 7),
                                      high=np.array([1 for i in range(7 * 6)]).reshape(6, 7),
@@ -19,6 +22,7 @@ class CustomEnv(Env):
         self.state = np.zeros((6, 7))
 
     def step(self, action):
+        # action=column number
         # Apply action
         if np.sum(self.state) == 0:
             player = 1
@@ -30,41 +34,34 @@ class CustomEnv(Env):
             j += 1
         self.state[j][action] = player
 
+        winner = ""
         # reward
         done = False
         reward = 0
         for i in range(self.NUM_ROWS - self.NUM2WIN + 1):
             for j in range(self.NUM_COLS - self.NUM2WIN + 1):
                 sub_state = self.state[i:i + self.NUM2WIN, j:j + self.NUM2WIN]
-                if np.max(np.sum(sub_state, axis=0)) == self.NUM2WIN:
+                if np.max(np.sum(sub_state, axis=0)) == self.NUM2WIN or np.max(
+                        np.sum(sub_state, axis=1)) == self.NUM2WIN or np.trace(sub_state) == self.NUM2WIN or np.trace(
+                    np.transpose(
+                        sub_state)) == self.NUM2WIN:  # human having 4 consecutive pieces in a column or row or both diagonals
                     done = True
-                    reward = 1
-                elif np.max(np.sum(sub_state, axis=0)) == -self.NUM2WIN:
+                    reward = -10
+                    winner = "Human"
+                elif np.min(np.sum(sub_state, axis=0)) == -self.NUM2WIN or np.min(
+                        np.sum(sub_state, axis=1)) == -self.NUM2WIN or np.trace(sub_state) == -self.NUM2WIN or np.trace(
+                    np.transpose(sub_state)) == -self.NUM2WIN:
                     done = True
-                    reward = -1
-                elif np.max(np.sum(sub_state, axis=1)) == self.NUM2WIN:
-                    done = True
-                    reward = 1
-                elif np.max(np.sum(sub_state, axis=1)) == -self.NUM2WIN:
-                    done = True
-                    reward = -1
-                elif abs(np.trace(sub_state)) == self.NUM2WIN:
-                    done = True
-                    reward = 1
-                elif abs(np.trace(sub_state)) == -self.NUM2WIN:
-                    done = True
-                    reward = -1
-                elif abs(np.trace(sub_state[::-1])) == self.NUM2WIN:
-                    done = True
-                    reward = 1
-                elif abs(np.trace(sub_state[::-1])) == -self.NUM2WIN:
-                    done = True
-                    reward = -1
+                    reward = 10
+                    winner = "Agent"
 
-        # Apply temperature noise
-        # self.state += random.randint(-1,1)
-        # Set placeholder for info
+        if -np.max(np.sum(self.state, axis=0)) == np.sum(self.state[:][action % 4]):
+            reward = 1
+        else:
+            reward = -1
+
         info = {}
+        info["winner"] = winner
 
         # Return step information
         return self.state, reward, done, info
