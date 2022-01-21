@@ -1,3 +1,5 @@
+import numpy as np
+
 from connect4 import Connect4
 import pygame
 import random
@@ -97,9 +99,11 @@ class Connect4_GUI(Connect4):
 
                 # Ask for Player 2 Input
                 elif player == -human_player:
-                    # move = rand.choice(moves)
                     move = model.predict(self.board)
                     move = move.argmax(axis=1)[1]
+                    while np.all(self.board[:, move] != 0):
+                        print('-'*100)
+                        move = np.random.choice([e for e in range(7) if e != move])
                     print(move)
                     if move in moves:
                         self.make_move(move)
