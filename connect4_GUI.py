@@ -11,7 +11,6 @@ from model import get_model
 
 rand = random.Random()
 env = CustomEnv()
-# model = PPO.load('./connect_4', env)
 model = get_model()
 model.load_weights('DQN_C4.h5')
 
@@ -99,7 +98,10 @@ class Connect4_GUI(Connect4):
 
                 # Ask for Player 2 Input
                 elif player == -human_player:
-                    move = model.predict(self.board)
+                    observations = self.board
+                    print(observations)
+                    move = model.predict(observations)
+                    print(move.shape)
                     move = move.argmax(axis=1)[1]
                     while np.all(self.board[:, move] != 0):
                         print('-'*100)
