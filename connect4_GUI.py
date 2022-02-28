@@ -4,7 +4,6 @@ from connect4 import Connect4
 import pygame
 import random
 import math
-from stable_baselines3 import PPO
 
 from custom_env import CustomEnv
 from model import get_model
@@ -99,12 +98,12 @@ class Connect4_GUI(Connect4):
                 # Ask for Player 2 Input
                 elif player == -human_player:
                     observations = self.board
-                    print(observations)
+                    # print(observations)
                     move = model.predict(observations)
-                    print(move.shape)
+                    # print(move.shape)
                     move = move.argmax(axis=1)[1]
                     while np.all(self.board[:, move] != 0):
-                        print('-'*100)
+                        # print('-'*100)
                         move = np.random.choice([e for e in range(7) if e != move])
                     print(move)
                     if move in moves:
