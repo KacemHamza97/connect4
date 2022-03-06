@@ -6,13 +6,16 @@ import random
 import math
 
 from custom_env import CustomEnv
-from model import get_model
+from model import get_model, player_1_agent, get_model_
 
 rand = random.Random()
+
 env = CustomEnv()
 model = get_model()
 model.load_weights('DQN_C4.h5')
-
+# player_1_model = get_model_()
+# player_1_model.build(input_shape=(1, 6, 7, 1))
+# player_1_model.load_weights('C4.h5')
 
 
 class Connect4_GUI(Connect4):
@@ -102,10 +105,11 @@ class Connect4_GUI(Connect4):
                     move = model.predict(observations)
                     # print(move.shape)
                     move = move.argmax(axis=1)[1]
+                    # move = player_1_agent(self.board, player_1_model)
                     while np.all(self.board[:, move] != 0):
                         # print('-'*100)
                         move = np.random.choice([e for e in range(7) if e != move])
-                    print(move)
+                    # print(move)
                     if move in moves:
                         self.make_move(move)
                         self.draw_board()
