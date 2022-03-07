@@ -1,2 +1,1 @@
-# Connect4
-GUI Connect for testing basic AI and Machine Learning
+This git repository contains a connect 4 game GUI where you can play against a smart agent (trained by a DQN) 
