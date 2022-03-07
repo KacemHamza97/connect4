@@ -43,29 +43,3 @@ class Connect4:
                 elif abs(np.trace(sub_board[::-1])) == self.NUM2WIN:
                     return True
         return False
-
-# def main():
-#     XO = {-1: "O", 0: "Nobody", 1: "X"}
-#     my_game = Connect4()
-#     moves = my_game.get_avail_moves()
-#     print(my_game)
-#     player = 1  # first player is always 1
-#     human_player = rand.choice([1, -1])
-#     while moves:
-#         if player == human_player:
-#             print(f"Available moves are: {moves}")
-#             move = int(input("Enter move human: "))
-#         else:
-#             move = rand.choice(moves)
-#         my_game.make_move(move)
-#         print(my_game)
-#         winner = my_game.get_winner()
-#         if winner:
-#             print(f"{XO[player]} Wins!")
-#             break
-#         moves = my_game.get_avail_moves()
-#         player = -player
-#
-#
-# if __name__ == "__main__":
-#     main()
